@@ -1,15 +1,14 @@
 #pragma once
 
 #include <windows.h>
-#include "../include/application.h"
 
 #include <d3d11.h>
 #include <dxgi.h>
-#include "../include/ntapi.h"
+#include "include/ntapi.h"
 
-#include "../imgui/imgui.h"
-#include "../imgui/imgui_impl_win32.h"
-#include "../imgui/imgui_impl_dx11.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_win32.h"
+#include "imgui/imgui_impl_dx11.h"
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")

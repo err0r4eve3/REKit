@@ -1,0 +1,33 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.VC.db
+*.VC.opendb
+*.ipch
+*.opendb
+
+# Build outputs
+[Bb]uild/
+x64/
+x86/
+Debug/
+Release/
+*.obj
+*.pch
+*.pdb
+*.ilk
+*.log
+*.tlog
+*.idb
+*.iobj
+*.ipch
+*.exp
+*.lib
+
+# ImGui
+imgui.ini
+
+# OS
+.DS_Store
+Thumbs.db

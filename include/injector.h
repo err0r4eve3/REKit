@@ -1,6 +1,6 @@
 #include <Windows.h>
-#include "../include/ntapi.h"
-#include "../include/utils.h"
+#include "include/ntapi.h"
+#include "include/utils.h"
 
 typedef DWORD(WINAPI* QUERYUSERAPC)(
     PAPCFUNC pfnAPC,

@@ -7,9 +7,9 @@
 #include <chrono>
 #include <algorithm>
 
-#include "../include/ntapi.h"
-#include "../include/application.h"
-#include "../include/utils.h"
+#include "include/ntapi.h"
+#include "include/utils.h"
+#include "imgui/imgui.h"
 
 struct ProcessInfo {
     std::wstring name;
