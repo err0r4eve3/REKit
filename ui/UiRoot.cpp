@@ -42,7 +42,25 @@ namespace REKit {
         }
 
         void UiRoot::Draw() {
-            // Host a full-window "Workspace" that fills the main viewport work area
+            {
+                ImGuiIO& io = ImGui::GetIO();
+
+                if (!openTabs_.empty()) {
+                    if (activeTab_ < 0) activeTab_ = 0;
+
+                    const bool ctrl = io.KeyCtrl;
+                    if (ctrl && ImGui::IsKeyPressed(ImGuiKey_Tab, /*repeat=*/false)) {
+                        const int delta = io.KeyShift ? -1 : +1;
+                        const int n = (int)openTabs_.size();
+                        activeTab_ = (activeTab_ + delta + n) % n;
+                    }
+                    // 可选：支持 Ctrl+PageUp/Down
+                    // if (ctrl && ImGui::IsKeyPressed(ImGuiKey_PageDown, false)) activeTab_ = (activeTab_ + 1) % (int)openTabs_.size();
+                    // if (ctrl && ImGui::IsKeyPressed(ImGuiKey_PageUp,   false)) activeTab_ = (activeTab_ - 1 + (int)openTabs_.size()) % (int)openTabs_.size();
+                }
+            }
+
+            // Host a full-window "Workspace"……
             ImGuiViewport* vp = ImGui::GetMainViewport();
             ImGui::SetNextWindowPos(vp->WorkPos);
             ImGui::SetNextWindowSize(vp->WorkSize);
@@ -50,7 +68,8 @@ namespace REKit {
                 ImGuiWindowFlags_NoDecoration |
                 ImGuiWindowFlags_NoBringToFrontOnFocus |
                 ImGuiWindowFlags_NoMove |
-                ImGuiWindowFlags_NoSavedSettings;
+                ImGuiWindowFlags_NoSavedSettings |
+                ImGuiWindowFlags_NoNav; // 避免该窗口参与导航
 
             if (ImGui::Begin("##WorkspaceHost", nullptr, hostFlags)) {
                 if (mode_ == LayoutMode::Tabs) {
@@ -61,7 +80,6 @@ namespace REKit {
                         ImGuiTabBarFlags_FittingPolicyResizeDown |
                         ImGuiTabBarFlags_NoCloseWithMiddleMouseButton))
                     {
-                        // Trailing "+" to add a tab
                         if (ImGui::TabItemButton("+", ImGuiTabItemFlags_Trailing))
                             ImGui::OpenPopup("AddPanelPopup");
 
@@ -72,29 +90,26 @@ namespace REKit {
                             ImGui::EndPopup();
                         }
 
-                        // Render each open tab
                         for (size_t i = 0; i < openTabs_.size(); ++i) {
-                            bool open = true; // passing &open shows the "x" close button
+                            bool open = true;
                             const std::string& name = openTabs_[i];
-                            if (ImGui::BeginTabItem(name.c_str(), &open)) {
+
+                            ImGuiTabItemFlags tab_flags =
+                                (activeTab_ == (int)i) ? ImGuiTabItemFlags_SetSelected : 0;
+
+                            if (ImGui::BeginTabItem(name.c_str(), &open, tab_flags)) {
                                 activeTab_ = (int)i;
-                                // draw the content-only callback
                                 for (auto& p : ui_->panels) {
                                     if (p.first == name && p.second) { p.second(); break; }
                                 }
                                 ImGui::EndTabItem();
                             }
-                            if (!open) { // user clicked close 'x'
-                                CloseTabAt(i);
-                                i = (i == 0) ? 0 : i - 1;
-                            }
+                            if (!open) { CloseTabAt(i); i = (i == 0) ? 0 : i - 1; }
                         }
-
                         ImGui::EndTabBar();
                     }
                 }
                 else {
-                    // Legacy: each panel in its own floating window
                     for (size_t i = 0; i < openTabs_.size();) {
                         bool open = true;
                         const std::string& name = openTabs_[i];
@@ -107,8 +122,7 @@ namespace REKit {
                     }
                 }
             }
-            ImGui::End(); // Workspace host window
+            ImGui::End();
         }
-
     }
 } // namespace

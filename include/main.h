@@ -1,6 +1,7 @@
 #pragma once
 
 #include <windows.h>
+#include <random>
 
 #include <d3d11.h>
 #include <dxgi.h>
